@@ -1,0 +1,43 @@
+language: python
+dist: bionic
+sudo: required
+git:
+  depth: false
+
+matrix:
+  include:
+    - name: "Typical scenario: latest Ubuntu LTS"
+      dist: bionic
+      addons:
+        apt:
+          packages:
+            - gcc
+            - g++-8
+            - gfortran
+      env:
+        - GCC_VERSION="bionic"
+        - PYVER="3"
+        - PYDIST="ANACONDA"
+        - ANACONDA_CHANNEL="defaults"
+      python: "3.7"
+
+
+before_install:
+  # Configure right compilers version
+  - gfortran --version
+  # Python requisites
+  - if [[ "$PYDIST" == "ANACONDA" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda$PYVER-latest-Linux-x86_64.sh -O miniconda.sh;
+      bash miniconda.sh -b -p $HOME/miniconda;
+      export PATH="$HOME/miniconda/bin:$PATH";
+      hash -r;
+      conda config --set always_yes yes --set changeps1 no;
+      conda info -a;
+      conda create -q -n test-environment -c $ANACONDA_CHANNEL python=$TRAVIS_PYTHON_VERSION scipy matplotlib
+      source activate test-environment;
+    else
+      pip install scipy matplotlib;
+    fi
+  - python --version
+script:
+  - conda install -c conda-forge pyccl
