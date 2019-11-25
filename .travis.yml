@@ -1,6 +1,5 @@
 language: python
 dist: bionic
-sudo: required
 git:
   depth: false
 
@@ -12,10 +11,9 @@ matrix:
         apt:
           packages:
             - gcc
-            - g++-8
+            - g++
             - gfortran
       env:
-        - GCC_VERSION="bionic"
         - PYVER="3"
         - PYDIST="ANACONDA"
         - ANACONDA_CHANNEL="defaults"
